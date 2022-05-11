@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { singleProduct, addToCart } from "../controllers/productsController.js";
+import { singleProduct, addToCart, addProducts, getAllProducts } from "../controllers/productsController.js";
 
-const authRouter = Router();
-authRouter.get("/products/:productId", singleProduct);
-authRouter.post("/add-to-cart", addToCart);
+const productsRouter = Router();
+productsRouter.get("/products/:productId", singleProduct);
+productsRouter.post("/add-to-cart", addToCart);
+productsRouter.post("/products", addProducts);
+productsRouter.get("/products", getAllProducts);
 
-
+export default productsRouter;
