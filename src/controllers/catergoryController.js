@@ -84,22 +84,6 @@ export async function getBooks(req, res){
     }
 }
 
-export async function getBooks(req, res){
-    try{
-        const books=await db
-        .collection("products")
-        .find({type: "book"})
-        .toArray();
-
-        if(!books){
-            return res.sendStatus(404);
-        }
-        res.status(200).send(books);
-    } catch(error){
-        console.log("deu xabu aqui"+ error);
-        res.sendStatus(500);
-    }
-}
 
 export async function getFashion(req, res){
     try{
