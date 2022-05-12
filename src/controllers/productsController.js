@@ -30,7 +30,7 @@ export async function addProducts(req, res) {
     const validation = productsSchema.validate(body, { abortEarly: true });
     if (validation.error) {
         console.log(validation.error.details);
-        res.sendStatus(406);
+        return res.sendStatus(406);
     }
 
     try {
