@@ -53,13 +53,12 @@ export async function getAllProducts(req, res) {
 }
 
 export async function deleteItem(req, res) {
-    const {idProduct} = res.locals.user
-  
+    const { id } = req.params;
     try {
-      db.collection("products").deleteOne({ _id: idProduct });
-  
-      res.sendStatus(200);
+        const deleted = await db.collection("products").deleteOne({ _id: new ObjectId(id) });
+        console.log(deleted);
+        res.sendStatus(200);
     } catch (error) {
-      res.send(error).status(500);
+        res.send(error).status(500);
     }
-  }
+}

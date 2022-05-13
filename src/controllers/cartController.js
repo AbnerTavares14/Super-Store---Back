@@ -33,4 +33,3 @@ export async function getProductsOfCart(req, res) {
         res.sendStatus(500);
     }
 }
-
