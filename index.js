@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(cors());
 app.use(authRouter);
 app.use(productsRouter);
-app.use(cartRouter);
 app.use(catergoryRouter);
+app.use(cartRouter);
 
 const PORTA = process.env.PORT || 5000;
 
