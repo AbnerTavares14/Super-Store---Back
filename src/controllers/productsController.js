@@ -51,3 +51,15 @@ export async function getAllProducts(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function deleteItem(req, res) {
+    const {idProduct} = res.locals.user
+  
+    try {
+      db.collection("products").deleteOne({ _id: idProduct });
+  
+      res.sendStatus(200);
+    } catch (error) {
+      res.send(error).status(500);
+    }
+  }
