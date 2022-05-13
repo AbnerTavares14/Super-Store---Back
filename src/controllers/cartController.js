@@ -27,7 +27,7 @@ export async function getProductsOfCart(req, res) {
     try {
         const products = await db.collection("carts").find({ userId: user._id }).toArray();
         const datas = { products: [...products], name: user.name }
-        res.send(products);
+        res.send(datas);
     } catch (err) {
         console.log("Deu erro na obtenção dos produtos no carrinho", err);
         res.sendStatus(500);
