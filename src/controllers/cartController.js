@@ -56,6 +56,7 @@ export async function getProductsOfCart(req, res) {
     }
 }
 
+
 export async function deleteCart(req, res) {
     const user = res.locals.user;
     try {
@@ -66,3 +67,17 @@ export async function deleteCart(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function deleteItemFromCart(req, res) {
+    const user = res.locals.user;
+    const { productId } = req.params;
+  
+    try {
+      db.collection("carts")
+        .updateMany({ userId: user._id }, { $pull: { cart: { _id: productId } } })
+        .then(res.sendStatus(200));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
