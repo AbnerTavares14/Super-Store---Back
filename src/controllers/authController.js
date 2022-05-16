@@ -23,7 +23,7 @@ export async function signUp(req, res) {
         }
         const senhaCriptografada = bcrypt.hashSync(body.password, 10);
 
-        await db.collection("users").insertOne({ name: body.name, email: body.email, password: senhaCriptografada });
+        await db.collection("users").insertOne({ name: body.name, email: body.email, password: senhaCriptografada, quantity: 0 });
         res.sendStatus(201);
     } catch (error) {
         console.log(error);
@@ -47,7 +47,8 @@ export async function signIn(req, res) {
         if (user && bcrypt.compareSync(body.password, user.password)) {
             const token = uuid();
             await db.collection('sessions').insertOne({ userId: user._id, token });
-            res.send(token);
+            const data = { name: user.name, token: token, quantity: user.quantity };
+            res.send(data);
         } else {
             res.sendStatus(406);
         }

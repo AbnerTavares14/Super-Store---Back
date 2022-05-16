@@ -1,20 +1,27 @@
 import db from "../db.js";
+import { ObjectId } from "mongodb";
 
 export async function addToCart(req, res) {
     const product = req.body;
     const user = res.locals.user;
 
     try {
-        const hasCart = await db.collection("carts").findOne({ userId: user._id });
+        const hasCart = await db.collection("carts").findOne({ userId: user._id, "product.name": product.name });
+        console.log(hasCart);
         if (hasCart) {
-            await db
-                .collection("carts")
-                .updateOne({ userId: user._id }, { $push: { cart: product } });
-            return res.sendStatus(201);
+            const cartHasProduct = await db.collection("carts").findOne({ _id: new ObjectId(hasCart._id) });
+            if (cartHasProduct) {
+                const soma = parseInt(cartHasProduct.product.quantity) + parseInt(product.quantity);
+                console.log(soma)
+                console.log(cartHasProduct, new ObjectId(cartHasProduct._id))
+                const opera = await db.collection("carts").updateOne({ _id: new ObjectId(cartHasProduct._id) }, { $inc: { "product.quantity": product.quantity } });
+                console.log(opera);
+                return res.sendStatus(200);
+            }
         }
         await db.collection("carts").insertOne({
             userId: user._id,
-            cart: [product],
+            product,
         });
         res.sendStatus(201);
     } catch (error) {
@@ -22,11 +29,23 @@ export async function addToCart(req, res) {
     }
 }
 
+export async function updateQuantity(req, res) {
+    const user = res.locals.user;
+    const { body } = req;
+    try {
+        await db.collection("carts").updateOne({ userId: user._id, _id: body._id }, { $set: { product: body.quantity } });
+        res.sendStatus(200);
+    } catch (err) {
+        console.log("Deu erro na atualização da quantidade do item", err);
+        res.sendStatus(500);
+    }
+}
+
 export async function getProductsOfCart(req, res) {
     const user = res.locals.user;
     try {
         const products = await db.collection("carts").find({ userId: user._id }).toArray();
-        const datas = products.length > 0 ? { ...products, name: user.name } : { cart: [], name: user.name };
+        const datas = { ...products, name: user.name };
         res.send(datas);
     } catch (err) {
         console.log("Deu erro na obtenção dos produtos no carrinho", err);
