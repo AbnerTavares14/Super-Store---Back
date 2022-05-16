@@ -7,21 +7,16 @@ export async function addToCart(req, res) {
 
     try {
         const hasCart = await db.collection("carts").findOne({ userId: user._id, "product.name": product.name });
-        console.log(hasCart);
         if (hasCart) {
             const cartHasProduct = await db.collection("carts").findOne({ _id: new ObjectId(hasCart._id) });
             if (cartHasProduct) {
-                const soma = parseInt(cartHasProduct.product.quantity) + parseInt(product.quantity);
-                console.log(soma)
-                console.log(cartHasProduct, new ObjectId(cartHasProduct._id))
-                const opera = await db.collection("carts").updateOne({ _id: new ObjectId(cartHasProduct._id) }, { $inc: { "product.quantity": product.quantity } });
-                console.log(opera);
+                await db.collection("carts").updateOne({ _id: new ObjectId(cartHasProduct._id) }, { $inc: { "product.quantity": product.quantity } });
                 return res.sendStatus(200);
             }
         }
         await db.collection("carts").insertOne({
             userId: user._id,
-            product,
+            product
         });
         res.sendStatus(201);
     } catch (error) {
@@ -32,9 +27,18 @@ export async function addToCart(req, res) {
 export async function updateQuantity(req, res) {
     const user = res.locals.user;
     const { body } = req;
+
     try {
-        await db.collection("carts").updateOne({ userId: user._id, _id: body._id }, { $set: { product: body.quantity } });
-        res.sendStatus(200);
+        const hasCart = await db.collection("carts").findOne({ userId: user._id, "product.name": body.name });
+        if (hasCart) {
+            const cartHasProduct = await db.collection("carts").findOne({ _id: new ObjectId(hasCart._id) });
+            if (cartHasProduct) {
+                await db.collection("carts").updateOne({ _id: new ObjectId(cartHasProduct._id) }, { $inc: { "product.quantity": body.quantity } });
+                return res.sendStatus(200);
+            }
+        } else {
+            res.sendStatus(404);
+        }
     } catch (err) {
         console.log("Deu erro na atualização da quantidade do item", err);
         res.sendStatus(500);
