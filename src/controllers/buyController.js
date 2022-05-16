@@ -2,9 +2,10 @@ import db from "../db.js";
 
 export async function buyProducts(req, res) {
     const { body } = req;
-
+    console.log("aaaaaaa")
     try {
-        const inCart = await db.collection("carts").findOne({ userId: user._id });
+        const inCart = await db.collection("carts").findOne({ userId: body.userId });
+        console.log(inCart)
         if (!inCart) {
             return res.sendStatus(404);
         }
