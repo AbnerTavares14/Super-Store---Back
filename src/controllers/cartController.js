@@ -56,6 +56,18 @@ export async function getProductsOfCart(req, res) {
     }
 }
 
+
+export async function deleteCart(req, res) {
+    const user = res.locals.user;
+    try {
+        await db.collection("carts").deleteMany({ userId: user._id });
+        res.sendStatus(200);
+    } catch (err) {
+        console.log("Deu errado a deleção", err);
+        res.sendStatus(500);
+    }
+}
+
 export async function deleteItemFromCart(req, res) {
     const user = res.locals.user;
     const { productId } = req.params;
@@ -68,3 +80,4 @@ export async function deleteItemFromCart(req, res) {
       console.log(error);
     }
   }
+
